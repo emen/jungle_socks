@@ -1,5 +1,6 @@
 package io.emen.demo.tests;
 
+import io.emen.demo.io.emen.demo.support.DriverFactory;
 import io.emen.demo.io.emen.demo.support.Sock;
 import io.emen.demo.pages.ConfirmPage;
 import io.emen.demo.pages.HomePage;
@@ -20,7 +21,7 @@ public class ConfirmTest {
 
     @BeforeSuite
     public void setup() {
-        driver = new ChromeDriver();
+        driver = DriverFactory.getDriver();
         HomePage homePage = new HomePage(driver);
         socks  = homePage.getSocks();
         states = homePage.getStates();
@@ -60,9 +61,9 @@ public class ConfirmTest {
         Assert.assertEquals(1, confirmSocks.length);
         Assert.assertEquals(theSock.getName(), confirmSock.getName());
         Assert.assertEquals(quantity, confirmSock.getQuantity());
-        Assert.assertEquals(expectedSubtotal, confirmPage.getSubtotal());
-        Assert.assertEquals(expectedTaxes, confirmPage.getTaxes());
-        Assert.assertEquals(expectedTotal, confirmPage.getTotal());
+        Assert.assertEquals(expectedSubtotal, confirmPage.getSubtotal(), 0.001);
+        Assert.assertEquals(expectedTaxes, confirmPage.getTaxes(), 0.001);
+        Assert.assertEquals(expectedTotal, confirmPage.getTotal(), 0.001);
     }
 
     @Test

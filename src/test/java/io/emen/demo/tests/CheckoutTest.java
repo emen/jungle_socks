@@ -1,5 +1,6 @@
 package io.emen.demo.tests;
 
+import io.emen.demo.io.emen.demo.support.DriverFactory;
 import io.emen.demo.pages.ConfirmPage;
 import io.emen.demo.pages.HomePage;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +16,7 @@ public class CheckoutTest {
 
     @BeforeSuite
     public void setup() {
-        driver = new ChromeDriver();
+        driver = DriverFactory.getDriver();
     }
 
     @AfterSuite
