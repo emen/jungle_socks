@@ -43,26 +43,24 @@ public class CheckoutTest {
 
     @Test
     public void checkoutWithSingleSock() {
-
     }
 
     @Test
     public void checkoutWithMultipleSock() {
-
     }
 
     @Test
     public void checkoutWithAllSock() {
-
     }
 
     @Test
     public void checkoutWithInvalidQuantity() {
-
+        // TODO non-number, negative number, decimal number
     }
 
     @Test
     public void checkoutWithOutofStockQuantity() {
         // TODO expect proper error page
     }
+
 }

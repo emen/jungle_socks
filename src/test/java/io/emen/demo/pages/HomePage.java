@@ -7,22 +7,37 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class HomePage {
 
     private WebDriver driver;
     private ArrayList<Sock> socks = new ArrayList<Sock>();
+    private ArrayList<String> availableStates = new ArrayList<String>();
+    private Select statesSelect;
 
     public HomePage(WebDriver driver) {
         this.driver = driver;
         driver.get("https://jungle-socks.herokuapp.com/");
+
+        // get all socks
         List<WebElement> lineItems = driver.findElements(By.cssSelector(".line_item"));
         for (WebElement lineItem: lineItems) {
             String name  = lineItem.findElement(By.cssSelector("td:nth-child(1)")).getText();
             String price = lineItem.findElement(By.cssSelector("td:nth-child(2)")).getText();
             String stock = lineItem.findElement(By.cssSelector("td:nth-child(3)")).getText();
             socks.add(new Sock(name, Double.parseDouble(price), Integer.parseInt(stock)));
+        }
+
+        // get all available states
+        statesSelect = new Select(driver.findElement(By.name("state")));
+        List<WebElement> states = statesSelect.getOptions();
+        for (WebElement state: states) {
+            String stateValue = state.getAttribute("value");
+            if (stateValue != "")
+                availableStates.add(stateValue);
         }
     }
 
@@ -32,8 +47,10 @@ public class HomePage {
     }
 
     public HomePage selectState(String state) {
-        Select states = new Select(driver.findElement(By.name("state")));
-        states.selectByVisibleText(state);
+        if (Pattern.matches("\\A[A-Z]{2}\\z", state))
+            statesSelect.selectByValue(state);
+        else
+            statesSelect.selectByVisibleText(state);
         return this;
     }
 
@@ -42,8 +59,21 @@ public class HomePage {
         return new ConfirmPage(driver);
     }
 
+    public ConfirmPage buyAndShip(HashMap<String,Integer> orders, String state) {
+        for (String sock: orders.keySet()) {
+            int quantity = orders.get(sock);
+            enterQuantity(quantity, sock);
+        }
+        selectState(state);
+        return checkout();
+    }
+
     public Sock[] getSocks() {
         return socks.toArray(new Sock[socks.size()]);
+    }
+
+    public String[] getStates() {
+        return availableStates.toArray(new String[availableStates.size()]);
     }
 
 }
