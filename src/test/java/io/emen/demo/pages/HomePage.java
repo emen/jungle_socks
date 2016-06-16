@@ -14,31 +14,13 @@ import java.util.regex.Pattern;
 public class HomePage {
 
     private WebDriver driver;
-    private ArrayList<Sock> socks = new ArrayList<Sock>();
     private ArrayList<String> availableStates = new ArrayList<String>();
     private Select statesSelect;
 
     public HomePage(WebDriver driver) {
         this.driver = driver;
         driver.get("https://jungle-socks.herokuapp.com/");
-
-        // get all socks
-        List<WebElement> lineItems = driver.findElements(By.cssSelector(".line_item"));
-        for (WebElement lineItem: lineItems) {
-            String name  = lineItem.findElement(By.cssSelector("td:nth-child(1)")).getText();
-            String price = lineItem.findElement(By.cssSelector("td:nth-child(2)")).getText();
-            String stock = lineItem.findElement(By.cssSelector("td:nth-child(3)")).getText();
-            socks.add(new Sock(name, Double.parseDouble(price), Integer.parseInt(stock)));
-        }
-
-        // get all available states
         statesSelect = new Select(driver.findElement(By.name("state")));
-        List<WebElement> states = statesSelect.getOptions();
-        for (WebElement state: states) {
-            String stateValue = state.getAttribute("value");
-            if (stateValue != "")
-                availableStates.add(stateValue);
-        }
     }
 
     public HomePage enterQuantity(int quantity, String name) {
@@ -69,10 +51,26 @@ public class HomePage {
     }
 
     public Sock[] getSocks() {
+        List<WebElement> lineItems = driver.findElements(By.cssSelector(".line_item"));
+        ArrayList<Sock> socks = new ArrayList<Sock>();
+        for (WebElement lineItem: lineItems) {
+            String name  = lineItem.findElement(By.cssSelector("td:nth-child(1)")).getText();
+            String price = lineItem.findElement(By.cssSelector("td:nth-child(2)")).getText();
+            String stock = lineItem.findElement(By.cssSelector("td:nth-child(3)")).getText();
+            socks.add(new Sock(name, Double.parseDouble(price), Integer.parseInt(stock)));
+        }
         return socks.toArray(new Sock[socks.size()]);
     }
 
     public String[] getStates() {
+        if (availableStates.size() == 0) {
+            List<WebElement> states = statesSelect.getOptions();
+            for (WebElement state: states) {
+                String stateValue = state.getAttribute("value");
+                if (stateValue != "")
+                    availableStates.add(stateValue);
+            }
+        }
         return availableStates.toArray(new String[availableStates.size()]);
     }
 
